@@ -7,6 +7,18 @@ on:
         required: false
         type: number
         default: 50
+      num_retries:
+        required: false
+        type: number
+        default: 8
+      retry_min_wait:
+        required: false
+        type: number
+        default: 15
+      retry_multiplier:
+        required: false
+        type: number
+        default: 2.0
       macro:
         required: false
         type: string
@@ -173,6 +185,9 @@ jobs:
           fi
 
           echo "MAX_ITERATIONS=${{ inputs.max_iterations || 50 }}" >> $GITHUB_ENV
+          echo "NUM_RETRIES=${{ inputs.num_retries || 8 }}" >> $GITHUB_ENV
+          echo "RETRY_MIN_WAIT=${{ inputs.retry_min_wait || 15 }}" >> $GITHUB_ENV
+          echo "RETRY_MULTIPLIER=${{ inputs.retry_multiplier || 2.0 }}" >> $GITHUB_ENV
           echo "SANDBOX_ENV_GITHUB_TOKEN=${{ secrets.PAT_TOKEN || github.token }}" >> $GITHUB_ENV
           echo "SANDBOX_ENV_BASE_CONTAINER_IMAGE=${{ inputs.base_container_image }}" >> $GITHUB_ENV
 
@@ -244,6 +259,9 @@ jobs:
             --issue-number ${{ env.ISSUE_NUMBER }} \
             --issue-type ${{ env.ISSUE_TYPE }} \
             --max-iterations ${{ env.MAX_ITERATIONS }} \
+            --num_retries ${{ env.NUM_RETRIES }} \
+            --retry_min_wait ${{ env.RETRY_MIN_WAIT }} \
+            --retry_multiplier ${{ env.RETRY_MULTIPLIER }} \
             --comment-id ${{ env.COMMENT_ID }} \
             --is-experimental ${{ steps.install_openhands.outputs.isExperimental }}
 
