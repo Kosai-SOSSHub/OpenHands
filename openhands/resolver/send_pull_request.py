@@ -284,7 +284,7 @@ def send_pull_request(
     # Create and checkout the new branch
     logger.info('Creating new branch...')
     result = subprocess.run(
-        ['git', '-C', patch_dir, 'checkout', '-b', branch_name],
+        ['git', '-C', patch_dir, 'checkout', '-b', branch_name, base_branch],
         capture_output=True,
         text=True,
     )
