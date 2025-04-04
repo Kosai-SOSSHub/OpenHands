@@ -282,7 +282,7 @@ def send_pull_request(
     logger.info(f'Base branch: {base_branch}')
 
     # Create and checkout the new branch
-    remote_base_branch = f'origin/{base_branch}'
+    remote_base_branch = f'refs/remotes/origin/{base_branch}'
     logger.info(f'Creating new branch {branch_name} from {remote_base_branch}...')
     result = subprocess.run(
         ['git', '-C', patch_dir, 'checkout', '-b', branch_name, remote_base_branch],
