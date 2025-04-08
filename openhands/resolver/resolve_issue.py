@@ -448,7 +448,6 @@ async def resolve_issue(
         .decode('utf-8')
         .strip()
     )
-    logger.info(f'Base commit: {base_commit}')
 
     if repo_instruction is None:
         # Check for .openhands_instructions file in the workspace directory
@@ -508,6 +507,7 @@ async def resolve_issue(
                 .decode('utf-8')
                 .strip()
             )
+        logger.info(f'Base commit: {base_commit}')
 
         output = await process_issue(
             issue,
