@@ -222,6 +222,12 @@ def make_commit(repo_dir: str, issue: Issue, issue_type: str) -> None:
     if result.returncode != 0:
         raise RuntimeError(f'Failed to commit changes: {result}')
 
+def get_current_branch(repo_dir):
+    result = subprocess.run(
+        ['git', '-C', repo_dir, 'rev-parse', '--abbrev-ref', 'HEAD'],
+        capture_output=True, text=True, check=True
+    )
+    return result.stdout.strip()
 
 def send_pull_request(
     issue: Issue,
@@ -281,6 +287,9 @@ def send_pull_request(
         base_branch = handler.get_default_branch_name()
     logger.info(f'Base branch: {base_branch}')
 
+    prev_branch = get_current_branch(patch_dir)
+    logger.info(f'Current branch before switch: {prev_branch}')
+
     # Create and checkout the new branch
     logger.info('Creating new branch...')
     result = subprocess.run(
@@ -293,6 +302,9 @@ def send_pull_request(
         raise RuntimeError(
             f'Failed to create a new branch {branch_name} in {patch_dir}:'
         )
+
+    new_branch = get_current_branch(patch_dir)
+    logger.info(f'New branch after switch: {new_branch}')
 
     # Determine the repository to push to (original or fork)
     push_owner = fork_owner if fork_owner else issue.owner
