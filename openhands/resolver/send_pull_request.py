@@ -224,7 +224,7 @@ def make_commit(repo_dir: str, issue: Issue, issue_type: str) -> None:
 
 def get_current_branch(repo_dir):
     result = subprocess.run(
-        ['git', '-C', repo_dir, 'rev-parse', '--abbrev-ref', 'HEAD'],
+        ['git', '-C', repo_dir, 'rev-parse', 'HEAD'],
         capture_output=True, text=True, check=True
     )
     return result.stdout.strip()
