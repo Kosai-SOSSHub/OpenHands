@@ -359,8 +359,8 @@ async def resolve_issue(
     issue_type: str,
     repo_instruction: str | None,
     issue_number: int,
-    target_branch: str | None = None,
     comment_id: int | None,
+    target_branch: str | None = None,
     reset_logger: bool = False,
 ) -> None:
     """Resolve a single issue.
