@@ -480,7 +480,7 @@ async def resolve_issue(
 
     try:
         # checkout to pr branch if needed
-        if target_branch or issue_type == 'pr':
+        if issue_type == 'pr' or target_branch is not None:
             branch_to_use = target_branch or issue.head_branch
             logger.info(
                 f'Checking out to PR branch {branch_to_use} for issue {issue.number}'
