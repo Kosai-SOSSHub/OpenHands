@@ -444,7 +444,7 @@ async def resolve_issue(
 
     # get the commit id of current repo for reproducibility
     base_commit = (
-        subprocess.check_output(['git', 'rev-parse', target_branch or 'HEAD'], cwd=repo_dir)  # noqa: ASYNC101
+        subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repo_dir)  # noqa: ASYNC101
         .decode('utf-8')
         .strip()
     )
@@ -480,8 +480,8 @@ async def resolve_issue(
 
     try:
         # checkout to pr branch if needed
-        if issue_type == 'pr':
-            branch_to_use = issue.head_branch
+        if target_branch or issue_type == 'pr':
+            branch_to_use = target_branch or issue.head_branch
             logger.info(
                 f'Checking out to PR branch {branch_to_use} for issue {issue.number}'
             )
