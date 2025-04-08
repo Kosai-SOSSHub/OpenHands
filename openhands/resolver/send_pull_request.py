@@ -484,6 +484,7 @@ def process_single_issue(
     issue_type = resolver_output.issue_type
 
     if issue_type == 'issue':
+        logger.info(f'issue base commit: {resolver_output.base_commit}')
         patched_repo_dir = initialize_repo(
             output_dir,
             resolver_output.issue.number,
@@ -491,6 +492,7 @@ def process_single_issue(
             resolver_output.base_commit,
         )
     elif issue_type == 'pr':
+        logger.info(f'pr head branch: {resolver_output.issue.head_branch}')
         patched_repo_dir = initialize_repo(
             output_dir,
             resolver_output.issue.number,
