@@ -359,6 +359,7 @@ async def resolve_issue(
     issue_type: str,
     repo_instruction: str | None,
     issue_number: int,
+    target_branch: str | None = None,
     comment_id: int | None,
     reset_logger: bool = False,
 ) -> None:
@@ -378,6 +379,7 @@ async def resolve_issue(
         issue_type: Type of issue to resolve (issue or pr).
         repo_instruction: Repository instruction to use.
         issue_number: Issue number to resolve.
+        target_branch: The target branch to use as the base branch (defaults to HEAD)
         comment_id: Optional ID of a specific comment to focus on.
 
         reset_logger: Whether to reset the logger for multiprocessing.
@@ -442,7 +444,7 @@ async def resolve_issue(
 
     # get the commit id of current repo for reproducibility
     base_commit = (
-        subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repo_dir)  # noqa: ASYNC101
+        subprocess.check_output(['git', 'rev-parse', target_branch or 'HEAD'], cwd=repo_dir)  # noqa: ASYNC101
         .decode('utf-8')
         .strip()
     )
@@ -612,6 +614,12 @@ def main() -> None:
         help='Path to the prompt template file in Jinja format.',
     )
     parser.add_argument(
+        '--target-branch',
+        type=str,
+        default=None,
+        help='Target branch to create the pull request against (defaults to repository default branch)',
+    )
+    parser.add_argument(
         '--repo-instruction-file',
         type=str,
         default=None,
@@ -692,6 +700,7 @@ def main() -> None:
             platform=platform,
             runtime_container_image=runtime_container_image,
             max_iterations=my_args.max_iterations,
+            target_branch=my_args.target_branch,
             output_dir=my_args.output_dir,
             llm_config=llm_config,
             prompt_template=prompt_template,
