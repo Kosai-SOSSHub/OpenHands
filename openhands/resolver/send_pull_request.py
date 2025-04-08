@@ -489,7 +489,7 @@ def process_single_issue(
             output_dir,
             resolver_output.issue.number,
             issue_type,
-            resolver_output.base_commit,
+            target_branch or resolver_output.base_commit,
         )
     elif issue_type == 'pr':
         logger.info(f'pr head branch: {resolver_output.issue.head_branch}')
