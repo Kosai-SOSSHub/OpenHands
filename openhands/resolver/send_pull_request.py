@@ -502,6 +502,9 @@ def process_single_issue(
     else:
         raise ValueError(f'Invalid issue type: {issue_type}')
 
+    current_branch = get_current_branch(patched_repo_dir)
+    logger.info(f'process_single_issue: {current_branch} {target_branch} {resolver_output.base_commit}')
+
     apply_patch(patched_repo_dir, resolver_output.git_patch)
 
     make_commit(patched_repo_dir, resolver_output.issue, issue_type)
