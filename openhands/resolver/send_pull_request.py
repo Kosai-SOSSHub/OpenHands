@@ -271,7 +271,7 @@ def send_pull_request(
         )
 
     # Create a new branch with a unique name
-    base_branch_name = f'openhands-fix-issue-{issue.number}'
+    base_branch_name = f'sosshub-fix-issue-{issue.number}'
     branch_name = handler.get_branch_name(
         base_branch_name=base_branch_name,
     )
