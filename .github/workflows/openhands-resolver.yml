@@ -192,7 +192,7 @@ jobs:
               body: `Started fixing the ${issueType}! You can monitor the progress [here](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`
             });
 
-      - name: Install OpenHands
+      - name: Install Issue Resolver
         id: install_openhands
         uses: actions/github-script@v7
         env:
