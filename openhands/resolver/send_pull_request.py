@@ -349,9 +349,11 @@ def send_pull_request(
         url = pr_data['html_url']
 
         # Request review if a reviewer was specified
-        if reviewer and pr_type != 'branch':
+        # if reviewer and pr_type != 'branch':
+        if pr_type != 'branch':
             number = pr_data['number']
-            handler.request_reviewers(reviewer, number)
+            # handler.request_reviewers(reviewer, number)
+            handler.request_reviewers(["nick-kosai","johnfuqua"], number)
 
     logger.info(
         f'{pr_type} created: {url}\n\n--- Title: {final_pr_title}\n\n--- Body:\n{pr_body}'
