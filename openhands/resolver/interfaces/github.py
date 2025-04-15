@@ -242,9 +242,12 @@ class GithubIssueHandler(IssueHandlerInterface):
         return dict(pr_data)
 
     def request_reviewers(self, reviewer: str, pr_number: int) -> None:
-        review_data = {'reviewers': [reviewer]}
+        logger.info(f'add assignees: {reviewer}')
+        # review_data = {'reviewers': [reviewer]}
+        review_data = {'assignees': [reviewer]}
         review_response = httpx.post(
-            f'{self.base_url}/pulls/{pr_number}/requested_reviewers',
+            # f'{self.base_url}/pulls/{pr_number}/requested_reviewers',
+            f'{self.base_url}/issues/{pr_number}/assignees',
             headers=self.headers,
             json=review_data,
         )
