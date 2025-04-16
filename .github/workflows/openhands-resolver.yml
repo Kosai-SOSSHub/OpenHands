@@ -258,7 +258,7 @@ jobs:
             echo "RESOLUTION_SUCCESS=false" >> $GITHUB_OUTPUT
           fi
           
-          find /tmp -iname result.json 2>/dev/null
+          find /tmp -iname sosshub_result.json 2>/dev/null
 
       - name: Upload output.jsonl as artifact
         uses: actions/upload-artifact@v4
