@@ -258,7 +258,7 @@ jobs:
             echo "RESOLUTION_SUCCESS=false" >> $GITHUB_OUTPUT
           fi
           
-          find /tmp -iname sosshub_result.json 2>/dev/null
+          echo "SOSSHUB_RESULT=$(find /tmp -iname sosshub_result.json 2>/dev/null)" >> "$GITHUB_OUTPUT"
 
       - name: Upload output.jsonl as artifact
         uses: actions/upload-artifact@v4
@@ -273,7 +273,7 @@ jobs:
         if: always()
         with:
           name: result-output
-          path: /tmp/output/result.json
+          path: ${{ steps.check_result.outputs.SOSSHUB_RESULT }}
           retention-days: 30
 
       - name: Create draft PR or push branch
