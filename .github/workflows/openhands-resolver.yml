@@ -266,6 +266,14 @@ jobs:
           path: /tmp/output/output.jsonl
           retention-days: 30 # Keep the artifact for 30 days
 
+      - name: Upload result.json as artifact
+        uses: actions/upload-artifact@v4
+        if: always() && hashFiles('/tmp/output/result.json') != ''
+        with:
+          name: result-output
+          path: /tmp/output/result.json
+          retention-days: 30
+
       - name: Create draft PR or push branch
         if: always() # Create PR or branch even if the previous steps fail
         env:
