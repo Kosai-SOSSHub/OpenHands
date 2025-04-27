@@ -252,6 +252,7 @@ jobs:
             --issue-type ${{ env.ISSUE_TYPE }} \
             --max-iterations ${{ env.MAX_ITERATIONS }} \
             --comment-id ${{ env.COMMENT_ID }} \
+            --runtime-container-image ${{ env.SANDBOX_BASE_CONTAINER_IMAGE }} \
             --is-experimental ${{ steps.install_openhands.outputs.isExperimental }}
 
       - name: Check resolution result
