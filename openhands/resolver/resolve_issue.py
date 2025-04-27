@@ -363,6 +363,7 @@ async def resolve_issue(
     max_iterations: int,
     output_dir: str,
     llm_config: LLMConfig,
+    base_container_image: str | None,
     runtime_container_image: str | None,
     prompt_template: str,
     issue_type: str,
