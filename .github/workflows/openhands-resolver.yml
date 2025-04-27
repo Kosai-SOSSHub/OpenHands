@@ -194,10 +194,10 @@ jobs:
               issue_number: ${{ env.ISSUE_NUMBER }},
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `[OpenHands](https://github.com/All-Hands-AI/OpenHands) started fixing the ${issueType}! You can monitor the progress [here](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`
+              body: `Started fixing the ${issueType}! You can monitor the progress [here](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`
             });
 
-      - name: Install OpenHands
+      - name: Install Issue Resolver
         id: install_openhands
         uses: actions/github-script@v7
         env:
@@ -226,7 +226,7 @@ jobs:
             if (isExperimentalLabel || isIssueCommentExperimental || isReviewCommentExperimental) {
               console.log("Installing experimental OpenHands...");
               await exec.exec("python -m pip install --upgrade pip");
-              await exec.exec("pip install git+https://github.com/all-hands-ai/openhands.git");
+              await exec.exec("pip install git+https://github.com/kosai-sosshub/openhands.git");
             } else {
               console.log("Installing from requirements.txt...");
               await exec.exec("python -m pip install --upgrade pip");
@@ -242,10 +242,12 @@ jobs:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
           LLM_API_VERSION: ${{ inputs.LLM_API_VERSION }}
+          TARGET_BRANCH: ${{ inputs.target_branch }}
           PYTHONPATH: ""
         run: |
           cd /tmp && python -m openhands.resolver.resolve_issue \
             --selected-repo ${{ github.repository }} \
+            --target-branch ${{ env.TARGET_BRANCH }} \
             --issue-number ${{ env.ISSUE_NUMBER }} \
             --issue-type ${{ env.ISSUE_TYPE }} \
             --max-iterations ${{ env.MAX_ITERATIONS }} \
@@ -260,6 +262,8 @@ jobs:
           else
             echo "RESOLUTION_SUCCESS=false" >> $GITHUB_OUTPUT
           fi
+          
+          echo "SOSSHUB_RESULT=$(find /tmp -iname sosshub_result.json 2>/dev/null)" >> "$GITHUB_OUTPUT"
 
       - name: Upload output.jsonl as artifact
         uses: actions/upload-artifact@v4
@@ -268,6 +272,14 @@ jobs:
           name: resolver-output
           path: /tmp/output/output.jsonl
           retention-days: 30 # Keep the artifact for 30 days
+
+      - name: Upload result.json as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: result-output
+          path: ${{ steps.check_result.outputs.SOSSHUB_RESULT }}
+          retention-days: 30
 
       - name: Create draft PR or push branch
         if: always() # Create PR or branch even if the previous steps fail
@@ -279,6 +291,7 @@ jobs:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
           LLM_API_VERSION: ${{ inputs.LLM_API_VERSION }}
+          TARGET_BRANCH: ${{ inputs.target_branch }}
           PYTHONPATH: ""
         run: |
           if [ "${{ steps.check_result.outputs.RESOLUTION_SUCCESS }}" == "true" ]; then
@@ -291,6 +304,7 @@ jobs:
           else
             cd /tmp && python -m openhands.resolver.send_pull_request \
               --issue-number ${{ env.ISSUE_NUMBER }} \
+              --target-branch ${{ env.TARGET_BRANCH }} \
               --pr-type branch \
               --send-on-failure | tee branch_result.txt && \
               grep "branch created" branch_result.txt | sed 's/.*\///g; s/.expand=1//g' > branch_name.txt

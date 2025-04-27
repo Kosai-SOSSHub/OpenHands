@@ -363,13 +363,13 @@ async def resolve_issue(
     max_iterations: int,
     output_dir: str,
     llm_config: LLMConfig,
-    base_container_image: str | None,
     runtime_container_image: str | None,
     prompt_template: str,
     issue_type: str,
     repo_instruction: str | None,
     issue_number: int,
     comment_id: int | None,
+    target_branch: str | None = None,
     reset_logger: bool = False,
     base_domain: str | None = None,
 ) -> None:
@@ -389,6 +389,7 @@ async def resolve_issue(
         issue_type: Type of issue to resolve (issue or pr).
         repo_instruction: Repository instruction to use.
         issue_number: Issue number to resolve.
+        target_branch: The target branch to use as the base branch (defaults to HEAD)
         comment_id: Optional ID of a specific comment to focus on.
         reset_logger: Whether to reset the logger for multiprocessing.
         base_domain: The base domain for the git server (defaults to "github.com" for GitHub and "gitlab.com" for GitLab)
@@ -461,7 +462,6 @@ async def resolve_issue(
         .decode('utf-8')
         .strip()
     )
-    logger.info(f'Base commit: {base_commit}')
 
     if repo_instruction is None:
         # Check for .openhands_instructions file in the workspace directory
@@ -493,8 +493,8 @@ async def resolve_issue(
 
     try:
         # checkout to pr branch if needed
-        if issue_type == 'pr':
-            branch_to_use = issue.head_branch
+        if issue_type == 'pr' or target_branch is not None:
+            branch_to_use = target_branch or issue.head_branch
             logger.info(
                 f'Checking out to PR branch {branch_to_use} for issue {issue.number}'
             )
@@ -521,6 +521,7 @@ async def resolve_issue(
                 .decode('utf-8')
                 .strip()
             )
+        logger.info(f'Base commit: {base_commit}')
 
         output = await process_issue(
             issue,
@@ -634,6 +635,12 @@ def main() -> None:
         help='Path to the prompt template file in Jinja format.',
     )
     parser.add_argument(
+        '--target-branch',
+        type=str,
+        default=None,
+        help='Target branch to create the pull request against (defaults to repository default branch)',
+    )
+    parser.add_argument(
         '--repo-instruction-file',
         type=str,
         default=None,
@@ -743,6 +750,7 @@ def main() -> None:
             base_container_image=base_container_image,
             runtime_container_image=runtime_container_image,
             max_iterations=my_args.max_iterations,
+            target_branch=my_args.target_branch,
             output_dir=my_args.output_dir,
             llm_config=llm_config,
             prompt_template=prompt_template,

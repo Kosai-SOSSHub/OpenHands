@@ -1,4 +1,4 @@
 DOCKER_REGISTRY=ghcr.io
-DOCKER_ORG=all-hands-ai
+DOCKER_ORG=kosai-sosshub
 DOCKER_IMAGE=openhands
 DOCKER_BASE_DIR="."
