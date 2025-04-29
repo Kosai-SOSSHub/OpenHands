@@ -232,7 +232,12 @@ jobs:
               await exec.exec("python -m pip install --upgrade pip");
               await exec.exec("pip install -r /tmp/requirements.txt");
             }
-
+            
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          syft version
+          
       - name: Attempt to resolve issue
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
