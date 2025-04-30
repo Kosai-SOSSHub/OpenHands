@@ -284,7 +284,7 @@ jobs:
         if: always()
         with:
           name: result-output
-          path: ${{ steps.check_result.outputs.SOSSHUB_RESULT }}
+          path: ${{ steps.check_result.outputs.SOSSHUB_RESULT || 'nonexistent-dummy-path.txt' }}
           if-no-files-found: ignore
           retention-days: 30
 
