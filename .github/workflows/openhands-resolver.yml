@@ -10,7 +10,7 @@ on:
       macro:
         required: false
         type: string
-        default: "@openhands-agent"
+        default: "@kosai-agent"
       target_branch:
         required: false
         type: string
@@ -70,12 +70,12 @@ jobs:
       github.event.label.name == 'fix-me-experimental' ||
       (
         ((github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment') &&
-        contains(github.event.comment.body, inputs.macro || '@openhands-agent') &&
+        contains(github.event.comment.body, inputs.macro || '@kosai-agent') &&
         (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'COLLABORATOR' || github.event.comment.author_association == 'MEMBER')
         ) ||
 
         (github.event_name == 'pull_request_review' &&
-        contains(github.event.review.body, inputs.macro || '@openhands-agent') &&
+        contains(github.event.review.body, inputs.macro || '@kosai-agent') &&
         (github.event.review.author_association == 'OWNER' || github.event.review.author_association == 'COLLABORATOR' || github.event.review.author_association == 'MEMBER')
         )
       )
@@ -104,11 +104,11 @@ jobs:
             github.event.label.name == 'fix-me-experimental' ||
             (
               (github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment') &&
-              contains(github.event.comment.body, '@openhands-agent-exp')
+              contains(github.event.comment.body, '@kosai-agent-exp')
             ) ||
             (
               github.event_name == 'pull_request_review' &&
-              contains(github.event.review.body, '@openhands-agent-exp')
+              contains(github.event.review.body, '@kosai-agent-exp')
             )
           )
         uses: actions/cache@v4
@@ -146,7 +146,7 @@ jobs:
           fi
 
           if [ -z "$PAT_USERNAME" ]; then
-            echo "Warning: PAT_USERNAME is not set, will use openhands-agent"
+            echo "Warning: PAT_USERNAME is not set, will use kosai-agent"
           fi
 
       - name: Set environment variables
@@ -215,9 +215,9 @@ jobs:
             const isExperimentalLabel = labelName === "fix-me-experimental";
             const isIssueCommentExperimental =
               (eventName === "issue_comment" || eventName === "pull_request_review_comment") &&
-              commentBody.includes("@openhands-agent-exp");
+              commentBody.includes("@kosai-agent-exp");
             const isReviewCommentExperimental =
-              eventName === "pull_request_review" && reviewBody.includes("@openhands-agent-exp");
+              eventName === "pull_request_review" && reviewBody.includes("@kosai-agent-exp");
 
             // Set output variable
             core.setOutput('isExperimental', isExperimentalLabel || isIssueCommentExperimental || isReviewCommentExperimental);
@@ -241,8 +241,8 @@ jobs:
       - name: Attempt to resolve issue
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
-          GITHUB_USERNAME: ${{ secrets.PAT_USERNAME || 'openhands-agent' }}
-          GIT_USERNAME: ${{ secrets.PAT_USERNAME || 'openhands-agent' }}
+          GITHUB_USERNAME: ${{ secrets.PAT_USERNAME || 'kosai-agent' }}
+          GIT_USERNAME: ${{ secrets.PAT_USERNAME || 'kosai-agent' }}
           LLM_MODEL: ${{ secrets.LLM_MODEL || inputs.LLM_MODEL }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
@@ -292,8 +292,8 @@ jobs:
         if: always() # Create PR or branch even if the previous steps fail
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
-          GITHUB_USERNAME: ${{ secrets.PAT_USERNAME || 'openhands-agent' }}
-          GIT_USERNAME: ${{ secrets.PAT_USERNAME || 'openhands-agent' }}
+          GITHUB_USERNAME: ${{ secrets.PAT_USERNAME || 'kosai-agent' }}
+          GIT_USERNAME: ${{ secrets.PAT_USERNAME || 'kosai-agent' }}
           LLM_MODEL: ${{ secrets.LLM_MODEL || inputs.LLM_MODEL }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
